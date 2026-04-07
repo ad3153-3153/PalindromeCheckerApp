@@ -1,140 +1,109 @@
-import java.util.Stack;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.ArrayDeque;
-import java.util.Deque;
+
+import java.util.Scanner;
 
 public class PalindromeCheckerApp {
-    public static void main(String[] args) {
-        System.out.println("Welcome to the Palindrome Checker Management System");
-        System.out.println("Version : 1.0");
-        System.out.println("System initialized successfully.");
+
+    // Node class for Linked List
+    static class Node {
+        char data;
+        Node next;
+
+        Node(char data) {
+            this.data = data;
+            this.next = null;
+        }
     }
-}
 
-class UseCase2PalindromeCheckerApp {
-    public static void main(String[] args) {
-        String input = "madam";
-        boolean isPalindrome = true;
+    // Convert string to linked list
+    public static Node createList(String input) {
+        Node head = null;
+        Node tail = null;
 
-        for (int i = 0; i < input.length() / 2; i++) {
-            if (input.charAt(i) != input.charAt(input.length() - 1 - i)) {
-                isPalindrome = false;
-                break;
+        for (char ch : input.toCharArray()) {
+            Node newNode = new Node(ch);
+
+            if (head == null) {
+                head = tail = newNode;
+            } else {
+                tail.next = newNode;
+                tail = newNode;
             }
         }
 
-        System.out.println("Input text: " + input);
-        System.out.println("Is it a Palindrome?: " + isPalindrome);
+        return head;
     }
-}
 
-class UseCase3PalindromeCheckerApp {
-    public static void main(String[] args) {
-        String input = "madam";
-        String reversed = "";
+    // Reverse linked list
+    public static Node reverse(Node head) {
+        Node prev = null;
+        Node current = head;
 
-        for (int i = input.length() - 1; i >= 0; i--) {
-            reversed += input.charAt(i);
+        while (current != null) {
+            Node next = current.next;
+            current.next = prev;
+            prev = current;
+            current = next;
         }
 
-        boolean isPalindrome = input.equals(reversed);
-
-        System.out.println("Original String: " + input);
-        System.out.println("Reversed String: " + reversed);
-        System.out.println("Is it a Palindrome?: " + isPalindrome);
+        return prev;
     }
-}
 
-class UseCase4PalindromeCheckerApp {
-    public static void main(String[] args) {
-        String input = "radar";
-        char[] chars = input.toCharArray();
-        int start = 0, end = chars.length - 1;
-        boolean isPalindrome = true;
+    // Palindrome check using linked list
+    public static boolean checkPalindromeLinkedList(String input) {
 
-        while (start < end) {
-            if (chars[start] != chars[end]) {
-                isPalindrome = false;
-                break;
+        Node head = createList(input);
+
+        if (head == null || head.next == null) {
+            return true;
+        }
+
+        Node slow = head;
+        Node fast = head;
+
+        // Find middle using fast & slow pointer
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        // Reverse second half
+        Node secondHalf = reverse(slow.next);
+
+        Node firstHalf = head;
+        Node tempSecond = secondHalf;
+
+        // Compare halves
+        while (tempSecond != null) {
+            if (firstHalf.data != tempSecond.data) {
+                return false;
             }
-            start++;
-            end--;
+            firstHalf = firstHalf.next;
+            tempSecond = tempSecond.next;
         }
 
-        System.out.println("Input: " + input);
-        System.out.println("Is Palindrome?: " + isPalindrome);
+        return true;
     }
-}
 
-class UseCase5PalindromeCheckerApp {
     public static void main(String[] args) {
-        String input = "noon";
-        Stack<Character> stack = new Stack<>();
 
-        for (char c : input.toCharArray()) {
-            stack.push(c);
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("================================");
+        System.out.println("      PALINDROME CHECKER APP    ");
+        System.out.println("      UC8: Linked List Method   ");
+        System.out.println("================================");
+
+        System.out.print("Enter a word: ");
+        String input = scanner.nextLine();
+
+        boolean result = checkPalindromeLinkedList(input);
+
+        if (result) {
+            System.out.println(input + " is a Palindrome");
+        } else {
+            System.out.println(input + " is NOT a Palindrome");
         }
 
-        boolean isPalindrome = true;
-
-        for (char c : input.toCharArray()) {
-            if (c != stack.pop()) {
-                isPalindrome = false;
-                break;
-            }
-        }
-
-        System.out.println("Input: " + input);
-        System.out.println("Is Palindrome?: " + isPalindrome);
-    }
-}
-
-class UseCase6PalindromeCheckerApp {
-    public static void main(String[] args) {
-        String input = "civic";
-
-        Queue<Character> queue = new LinkedList<>();
-        Stack<Character> stack = new Stack<>();
-
-        for (char c : input.toCharArray()) {
-            queue.add(c);
-            stack.push(c);
-        }
-
-        boolean isPalindrome = true;
-
-        while (!queue.isEmpty()) {
-            if (!queue.poll().equals(stack.pop())) {
-                isPalindrome = false;
-                break;
-            }
-        }
-
-        System.out.println("Input: " + input);
-        System.out.println("Is Palindrome?: " + isPalindrome);
-    }
-}
-
-class UseCase7PalindromeCheckerApp {
-    public static void main(String[] args) {
-        String input = "refer";
-        Deque<Character> deque = new ArrayDeque<>();
-
-        for (char c : input.toCharArray()) {
-            deque.addLast(c);
-        }
-
-        boolean isPalindrome = true;
-
-        while (deque.size() > 1) {
-            if (!deque.removeFirst().equals(deque.removeLast())) {
-                isPalindrome = false;
-                break;
-            }
-        }
-
-        System.out.println("Input: " + input);
-        System.out.println("Is Palindrome?: " + isPalindrome);
+        scanner.close();
     }
 }
